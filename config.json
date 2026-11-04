@@ -1,0 +1,20 @@
+{
+    "interval": 300,
+    "servers": {
+        "EpicQuest RecConned": {
+            "name": "EpicQuest RecConned",
+            "format": "simple",
+            "url": "https://recconned.gabethefirst.com/api/players/count"
+        },
+        "Vanilla": {
+            "name": "Vanilla",
+            "format": "simple",
+            "url": "https://api.vanillarec.net/ws/getplrcount"
+        },
+        "MeowNet": {
+            "name": "MeowNet",
+            "format": "meownet",
+            "url": "https://live.meowii.app/api/players/online"
+        }
+    }
+}

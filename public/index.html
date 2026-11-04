@@ -1,0 +1,179 @@
+<html>
+<head>
+    <title>Rec Room revivals player count</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #revivalPlayerCounts {
+            margin-bottom: 20px;
+        }
+        #chartContainer {
+            width: 80vw;
+            height: 80vh;
+        }
+    </style>
+</head>
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
+    <center>
+    <div id="revivalPlayerCounts"></div>
+    <div id="chartContainer">
+        <canvas id="myChart" width="400" height="200"></canvas>
+    </div>
+    </center>
+    <script>
+        const ctx = document.getElementById('myChart');
+
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Loading'],
+                datasets: [{
+                    label: 'Players Online',
+                    data: [0],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    },
+                    x: {
+                        ticks: {
+                            maxTicksLimit: 10
+                        }
+                    }
+                },
+                plugins: {
+                    zoom: {
+                        zoom: {
+                        wheel: {
+                            enabled: true,
+                        },
+                        pinch: {
+                            enabled: true
+                        },
+                        mode: 'x',
+                        }
+                    }
+                }
+            }
+        });
+
+        function formatTimestamp(timestamp) {
+            return new Date(timestamp * 1000).toLocaleString();
+        }
+
+        let refreshRate = 300000;
+        let refreshTimer = null;
+
+        async function getConfig() {
+            const url = "/config";
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                throw new Error(`Response status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                refreshRate = Number(result.interval ?? 300) * 1000;
+                return result;
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        async function getPlayerCountHistoryOfServer(name) {
+            const url = `/data/${name}.json`;
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                throw new Error(`Response status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                return result;
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        async function init() {
+            const config = await getConfig();
+            if (!config || !config.servers) {
+                return;
+            }
+
+            if (refreshTimer) {
+                clearInterval(refreshTimer);
+            }
+            refreshTimer = setInterval(init, refreshRate);
+
+            const servers = config.servers;
+            const serverHistoryByName = new Map();
+            var revivalPlayerCountsDiv = document.getElementById('revivalPlayerCounts');
+
+            revivalPlayerCountsDiv.innerHTML = '';
+
+            for (const name of Object.keys(servers)) {
+                const playerCountData = await getPlayerCountHistoryOfServer(name);
+                if (!playerCountData || !playerCountData.length) {
+                    continue;
+                }
+
+                const playerCount = playerCountData[playerCountData.length - 1].data.value;
+                const serverDiv = document.createElement('div');
+                const br = document.createElement('br');
+
+                serverHistoryByName.set(name, playerCountData);
+                serverDiv.textContent = `${name}: ${playerCount}`;
+                revivalPlayerCountsDiv.appendChild(serverDiv);
+                revivalPlayerCountsDiv.appendChild(br);
+            }
+
+            if (serverHistoryByName.size === 0) {
+                chart.data.labels = ['No data'];
+                chart.data.datasets = [{
+                    label: 'Players Online',
+                    data: [0],
+                    borderWidth: 1,
+                    fill: false
+                }];
+                chart.update();
+                return;
+            }
+
+            const allTimestamps = [...new Set(
+                [...serverHistoryByName.values()].flatMap((history) =>
+                    history.map((entry) => Number(entry.timestamp))
+                )
+            )].sort((a, b) => a - b);
+
+            const labels = allTimestamps.map((timestamp) => formatTimestamp(timestamp));
+
+            chart.data.labels = labels;
+            chart.data.datasets = [...serverHistoryByName.entries()].map(([name, history]) => {
+                const dataByTimestamp = new Map(
+                    history.map((entry) => [Number(entry.timestamp), Number(entry.data?.value ?? 0)])
+                );
+
+                return {
+                    label: name,
+                    data: allTimestamps.map((timestamp) => dataByTimestamp.get(timestamp) ?? null),
+                    borderWidth: 1,
+                    fill: false
+                };
+            });
+
+            chart.update();
+        }
+
+        init();
+    </script>
+</body>
+</html>
