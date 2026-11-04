@@ -8,10 +8,16 @@
         }
         #revivalPlayerCounts {
             margin-bottom: 20px;
+            flex: 20%;
         }
         #chartContainer {
             width: 80vw;
             height: 80vh;
+            flex: 80%;
+        }
+        #stuff {
+            display: flex;
+            align-items: center;
         }
     </style>
 </head>
@@ -19,12 +25,13 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
-    <center>
+    <h1>Rec Room revivals player count</h1> Website by cart1416
+    <div id="stuff">
     <div id="revivalPlayerCounts"></div>
     <div id="chartContainer">
         <canvas id="myChart" width="400" height="200"></canvas>
     </div>
-    </center>
+    </div>
     <script>
         const ctx = document.getElementById('myChart');
 
