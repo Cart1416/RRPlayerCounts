@@ -20,6 +20,11 @@
             "name": "KittyRec",
             "format": "kittyrec",
             "url": "https://kittyrec.tabbycluster.net/web/status"
+        },
+        "RecFlare": {
+            "name": "RecFlare",
+            "format": "kittyrec",
+            "url": "https://www.recflare.net/api/stats/online"
         }
     }
 }
