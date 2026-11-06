@@ -27,6 +27,10 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
     <h1>Rec Room revivals player count</h1>
     Website by cart1416     <a href="https://github.com/Cart1416/RRPlayerCounts">GitHub</a>
+    <div id="rangeControls" style="margin: 12px 0;">
+        <label for="rangeSelect">Time range: </label>
+        <select id="rangeSelect"></select>
+    </div>
     <div id="stuff">
     <div id="revivalPlayerCounts"></div>
     <div id="chartContainer">
@@ -77,8 +81,63 @@
             return new Date(timestamp * 1000).toLocaleString();
         }
 
-        let refreshRate = 300000;
-        let refreshTimer = null;
+        
+        var refreshRate = 300000;
+        var refreshTimer = null;
+        
+        const optionsForTime = {
+            '24h': 24 * 60 * 60,
+            '48h': 48 * 60 * 60,
+            '72h': 72 * 60 * 60,
+            '7d': 7 * 24 * 60 * 60,
+            '30d': 30 * 24 * 60 * 60,
+            '1y': 365 * 24 * 60 * 60,
+            'all': null
+        };
+        var selectedRange = '24h';
+
+        const rangeSelect = document.getElementById('rangeSelect');
+
+        const rangeLabels = {
+            '24h': '24 hours',
+            '48h': '48 hours',
+            '72h': '72 hours',
+            '7d': '7 days',
+            '30d': '30 days',
+            '1y': '1 year',
+            'all': 'Infinite'
+        };
+
+        for (var value of Object.keys(optionsForTime)) {
+            const seconds = optionsForTime[value];
+            const option = document.createElement('option');
+            option.value = value;
+            option.textContent = rangeLabels[value];
+            rangeSelect.appendChild(option);
+        }
+
+        rangeSelect.value = selectedRange;
+
+        rangeSelect.addEventListener('change', () => {
+            selectedRange = rangeSelect.value;
+            init();
+        });
+
+        function getFilteredTimestamps(allTimestamps) {
+            if (!allTimestamps.length) {
+                return [];
+            }
+
+            const latestTimestamp = Math.max(...allTimestamps);
+            const rangeSeconds = optionsForTime[selectedRange];
+
+            if (rangeSeconds === null) {
+                return allTimestamps;
+            }
+
+            const cutoff = latestTimestamp - rangeSeconds;
+            return allTimestamps.filter((timestamp) => timestamp >= cutoff);
+        }
 
         async function getConfig() {
             const url = "/config";
@@ -162,7 +221,8 @@
                 )
             )].sort((a, b) => a - b);
 
-            const labels = allTimestamps.map((timestamp) => formatTimestamp(timestamp));
+            const filteredTimestamps = getFilteredTimestamps(allTimestamps);
+            const labels = filteredTimestamps.map((timestamp) => formatTimestamp(timestamp));
 
             chart.data.labels = labels;
             chart.data.datasets = [...serverHistoryByName.entries()].map(([name, history]) => {
@@ -172,7 +232,7 @@
 
                 return {
                     label: name,
-                    data: allTimestamps.map((timestamp) => dataByTimestamp.get(timestamp) ?? null),
+                    data: filteredTimestamps.map((timestamp) => dataByTimestamp.get(timestamp) ?? null),
                     borderWidth: 1,
                     fill: false
                 };
