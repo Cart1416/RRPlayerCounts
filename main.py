@@ -73,6 +73,15 @@ def getPlayerCounts():
                 with open(file_path, "w", encoding="utf-8") as output:
                     json.dump(history, output, ensure_ascii=False, indent=2)
 
+            elif serverData.get("format") == "vanadium":
+                history.append({
+                    "timestamp": timestamp,
+                    "data": {"value": data.get("PlayersOnline", -1)}
+                })
+
+                with open(file_path, "w", encoding="utf-8") as output:
+                    json.dump(history, output, ensure_ascii=False, indent=2)
+
         except Exception as e:
             print(e)
             continue

@@ -25,6 +25,11 @@
             "name": "RecFlare",
             "format": "kittyrec",
             "url": "https://www.recflare.net/api/stats/online"
+        },
+        "Rec.pet (Vanadium)": {
+            "name": "Rec.pet (Vanadium)",
+            "format": "vanadium",
+            "url": "https://rec.pet/api/misc/players-online"
         }
     }
 }
