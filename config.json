@@ -25,6 +25,11 @@
             "name": "RecFlare",
             "format": "kittyrec",
             "url": "https://www.recflare.net/api/stats/online"
+        },
+        "SnowRec": {
+            "name": "SnowRec",
+            "format": "snowrec",
+            "url": "https://rec.fem-boy.site/api/site/overview"
         }
     }
 }
