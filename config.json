@@ -30,6 +30,11 @@
             "name": "SnowRec",
             "format": "snowrec",
             "url": "https://rec.fem-boy.site/api/site/overview"
+        },
+        "Kit.Net (NexaNet)": {
+            "name": "Kit.Net (NexaNet)",
+            "format": "kittyrec",
+            "url": "https://nerlz.com/online"
         }
     }
 }
