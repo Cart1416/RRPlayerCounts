@@ -35,6 +35,11 @@
             "name": "Radium",
             "format": "radium",
             "url": "https://match-staging.radie.app/admin/players/online"
+        },
+        "RecVard": {
+            "name": "RecVard",
+            "format": "recvard",
+            "url": "https://ns.recvard.net/api/bot/online-players"
         }
     }
 }

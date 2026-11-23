@@ -93,9 +93,13 @@ def getPlayerCounts():
 
             elif serverData.get("format") == "radium":
                 totalRadPlayers = data[0].get("Players", -1)
+                didWeFindRecNet = False
                 for platform in data[0].get("Platforms", -1):
                     if platform["PlatformType"] == 4:
                         notSoRadRecNetPeople = platform.get("Players", 0)
+                        didWeFindRecNet = True
+                if didWeFindRecNet == False:
+                    notSoRadRecNetPeople = 0
                 history.append({
                     "timestamp": timestamp,
                     "data": {"value": totalRadPlayers - notSoRadRecNetPeople}
@@ -103,6 +107,16 @@ def getPlayerCounts():
 
                 with open(file_path, "w", encoding="utf-8") as output:
                     json.dump(history, output, ensure_ascii=False, indent=2)
+
+            elif serverData.get("format") == "recvard":
+                history.append({
+                    "timestamp": timestamp,
+                    "data": {"value": data.get("onlinePlayers", -1)}
+                })
+
+                with open(file_path, "w", encoding="utf-8") as output:
+                    json.dump(history, output, ensure_ascii=False, indent=2)
+
 
         except Exception as e:
             print(e)
