@@ -95,7 +95,7 @@ def getPlayerCounts():
                 totalRadPlayers = data[0].get("Players", -1)
                 for platform in data[0].get("Platforms", -1):
                     if platform["PlatformType"] == 4:
-                        notSoRadRecNetPeople = platform["Players"]
+                        notSoRadRecNetPeople = platform.get("Players", 0)
                 history.append({
                     "timestamp": timestamp,
                     "data": {"value": totalRadPlayers - notSoRadRecNetPeople}
