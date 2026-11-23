@@ -30,6 +30,11 @@
             "name": "Kit.Net (NexaNet)",
             "format": "kittyrec",
             "url": "https://nerlz.com/online"
+        },
+        "Radium": {
+            "name": "Radium",
+            "format": "radium",
+            "url": "https://match-staging.radie.app/admin/players/online"
         }
     }
 }
