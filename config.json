@@ -40,6 +40,11 @@
             "name": "RecVard",
             "format": "recvard",
             "url": "https://ns.recvard.net/api/bot/online-players"
+        },
+        "Rec Uni": {
+            "name": "Rec Uni",
+            "format": "recuni",
+            "url": "https://recuni.org/web/api/home"
         }
     }
 }
