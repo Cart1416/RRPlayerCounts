@@ -117,6 +117,15 @@ def getPlayerCounts():
                 with open(file_path, "w", encoding="utf-8") as output:
                     json.dump(history, output, ensure_ascii=False, indent=2)
 
+            elif serverData.get("format") == "recuni":
+                history.append({
+                    "timestamp": timestamp,
+                    "data": {"value": data["stats"].get("online", -1)}
+                })
+
+                with open(file_path, "w", encoding="utf-8") as output:
+                    json.dump(history, output, ensure_ascii=False, indent=2)
+
 
         except Exception as e:
             print(e)
